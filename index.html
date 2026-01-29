@@ -81,110 +81,86 @@
         const listContainer = document.getElementById('channel-list');
         const video = document.getElementById('video');
 
-        // 1. LER O ARQUIVO DO USUÁRIO
         fileInput.addEventListener('change', function(e) {
             const arquivo = e.target.files[0];
             if (!arquivo) return;
-
-            statusMsg.innerText = "Lendo arquivo... (Aguarde)";
-            statusMsg.style.color = "yellow";
-
+            statusMsg.innerText = "Lendo arquivo...";
             const leitor = new FileReader();
-            
             leitor.onload = function(e) {
-                const conteudo = e.target.result;
-                if(conteudo.includes("#EXTM3U")) {
-                    processarLista(conteudo);
+                if(e.target.result.includes("#EXTM3U")) {
+                    processarLista(e.target.result);
                 } else {
-                    statusMsg.innerText = "Erro: Isso não parece uma lista M3U válida!";
-                    statusMsg.style.color = "red";
+                    alert("Arquivo inválido! Use uma lista .m3u");
                 }
             };
-            
-            leitor.onerror = function() {
-                statusMsg.innerText = "Erro ao ler o arquivo!";
-            };
-
             leitor.readAsText(arquivo);
         });
 
-        // 2. PROCESSAR A LISTA (OTIMIZADO)
         function processarLista(texto) {
             todosCanais = [];
             const lines = texto.split('\n');
             let nomeAtual = "";
-
-            statusMsg.innerText = "Organizando canais... (Quase lá)";
-
-            // Timeout para dar tempo da interface atualizar antes de travar processando
-            setTimeout(() => {
-                for (let i = 0; i < lines.length; i++) {
-                    let linha = lines[i].trim();
-                    if (linha.startsWith('#EXTINF')) {
-                        let partes = linha.split(',');
-                        nomeAtual = partes[partes.length - 1] || 'Sem Nome';
-                    } else if (linha.startsWith('http')) {
-                        if (nomeAtual) {
-                            todosCanais.push({ nome: nomeAtual, url: linha });
-                            nomeAtual = "";
-                        }
+            for (let i = 0; i < lines.length; i++) {
+                let linha = lines[i].trim();
+                if (linha.startsWith('#EXTINF')) {
+                    let partes = linha.split(',');
+                    nomeAtual = partes[partes.length - 1] || 'Sem Nome';
+                } else if (linha.startsWith('http')) {
+                    if (nomeAtual) {
+                        todosCanais.push({ nome: nomeAtual, url: linha });
+                        nomeAtual = "";
                     }
                 }
-
-                // Troca de tela
-                if (todosCanais.length > 0) {
-                    document.getElementById('upload-screen').style.display = 'none';
-                    document.getElementById('app').style.display = 'flex';
-                    renderizar(todosCanais.slice(0, 50)); // Mostra os primeiros 50
-                } else {
-                    statusMsg.innerText = "Nenhum canal encontrado na lista!";
-                    statusMsg.style.color = "red";
-                }
-            }, 100);
+            }
+            if (todosCanais.length > 0) {
+                document.getElementById('upload-screen').style.display = 'none';
+                document.getElementById('app').style.display = 'flex';
+                renderizar(todosCanais.slice(0, 50));
+            }
         }
 
-        // 3. RENDERIZAR NA TELA
         function renderizar(lista) {
             listContainer.innerHTML = '';
-            const fragment = document.createDocumentFragment();
-            
             lista.forEach(canal => {
                 const btn = document.createElement('button');
                 btn.className = 'channel-btn';
                 btn.innerText = canal.nome;
                 btn.onclick = () => tocar(canal.url, btn);
-                fragment.appendChild(btn);
+                listContainer.appendChild(btn);
             });
-            listContainer.appendChild(fragment);
-
-            if(lista.length === 0) listContainer.innerHTML = '<p style="text-align:center; padding:20px">Nada encontrado.</p>';
         }
 
-        // 4. BUSCA (COM DELAY PARA NÃO TRAVAR)
-        let timerBusca;
         function filtrar() {
-            clearTimeout(timerBusca);
-            timerBusca = setTimeout(() => {
-                const termo = document.getElementById('search').value.toLowerCase();
-                if (termo.length < 2) {
-                    renderizar(todosCanais.slice(0, 50));
-                } else {
-                    const filtrados = todosCanais.filter(c => c.nome.toLowerCase().includes(termo)).slice(0, 100);
-                    renderizar(filtrados);
-                }
-            }, 300);
+            const termo = document.getElementById('search').value.toLowerCase();
+            const filtrados = todosCanais.filter(c => c.nome.toLowerCase().includes(termo)).slice(0, 100);
+            renderizar(filtrados);
         }
 
-        // 5. TOCAR VÍDEO
         function tocar(url, btn) {
             document.querySelectorAll('.channel-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
+            
+            // Verifica se é HTTP em site HTTPS (Mixed Content)
+            if (window.location.protocol === 'https:' && url.startsWith('http:')) {
+                alert("⚠️ AVISO DE SEGURANÇA ⚠️\n\nO GitHub é seguro (HTTPS) mas sua lista é insegura (HTTP).\n\nO navegador bloqueou o vídeo. Tente editar sua lista trocando http por https, ou permita conteúdo inseguro nas configurações do site.");
+            }
 
             if (Hls.isSupported()) {
                 const hls = new Hls();
                 hls.loadSource(url);
                 hls.attachMedia(video);
                 hls.on(Hls.Events.MANIFEST_PARSED, () => video.play());
+                
+                // ESPIÃO DE ERROS
+                hls.on(Hls.Events.ERROR, function (event, data) {
+                    if (data.fatal) {
+                        console.log("Erro fatal HLS:", data);
+                        // Não mostramos alert em todo erro pra não ficar chato, mas se for rede:
+                        if(data.type === Hls.ErrorTypes.NETWORK_ERROR) {
+                             console.log("Erro de rede - provável bloqueio Mixed Content ou CORS");
+                        }
+                    }
+                });
             } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
                 video.src = url;
                 video.play();
