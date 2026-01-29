@@ -3,113 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GATEOSTV – Proxy Edition 🐱</title>
+    <title>GATEOSTV – Madrid 🐱🇪🇸</title>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
-        /* TEMA FRAJOLA DARK */
-        :root { --primary: #d32f2f; --bg: #0a0a0a; --card: #141414; --text: #e0e0e0; }
-        
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+        :root { --primary: #d32f2f; --bg: #0a0a0a; --text: #e0e0e0; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; display: flex; flex-direction: column; height: 100vh; }
         
         /* TELA DE CARGA */
-        #setup-screen {
-            position: fixed; inset: 0; background: #050505; z-index: 2000;
-            display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center;
+        #loading-screen {
+            position: fixed; inset: 0; background: #000; z-index: 2000;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
-        h1 { font-family: 'Fredoka One', cursive; color: var(--primary); font-size: 2.5rem; margin-bottom: 10px; text-shadow: 2px 2px 0 #fff; }
-        
-        .input-group { width: 100%; max-width: 400px; display: flex; flex-direction: column; gap: 10px; }
-        .url-input { padding: 15px; border-radius: 8px; border: 2px solid #333; background: #111; color: white; font-size: 1rem; }
-        .btn-load { padding: 15px; border-radius: 8px; border: none; background: var(--primary); color: white; font-weight: bold; font-size: 1.1rem; cursor: pointer; transition: 0.2s; }
-        .btn-load:active { transform: scale(0.98); }
-        .or-divider { color: #666; font-size: 0.9rem; margin: 10px 0; }
-        
-        /* APP PRINCIPAL */
-        #app { display: none; flex-direction: column; height: 100%; }
-        
-        /* ÁREA DO VÍDEO */
+        .spinner { border: 4px solid #333; border-top: 4px solid var(--primary); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* PLAYER */
         #video-area { flex-shrink: 0; background: black; position: sticky; top: 0; z-index: 100; border-bottom: 2px solid var(--primary); }
         video { width: 100%; max-height: 35vh; display: block; }
-        .video-status { padding: 8px; font-size: 0.8rem; text-align: center; color: #aaa; background: #111; }
-
+        
         /* CONTROLES */
         #controls { padding: 10px; background: #111; display: flex; flex-direction: column; gap: 10px; }
-        select, input[type="text"] { 
-            padding: 12px; background: #222; border: 1px solid #333; color: white; border-radius: 6px; font-size: 1rem; outline: none;
-        }
+        select, input { padding: 12px; background: #222; border: 1px solid #333; color: white; border-radius: 6px; width: 100%; box-sizing: border-box; }
         select { font-weight: bold; color: var(--primary); }
 
-        /* LISTA DE CANAIS */
-        #channel-list { flex-grow: 1; overflow-y: auto; padding: 0; }
-        
-        .channel-row {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 12px 15px; border-bottom: 1px solid #222; transition: background 0.2s;
-        }
+        /* LISTA */
+        #channel-list { flex-grow: 1; overflow-y: auto; }
+        .channel-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; border-bottom: 1px solid #222; }
         .channel-row:hover { background: #1a1a1a; }
         .channel-row.active { background: #1a0505; border-left: 4px solid var(--primary); }
-
-        .ch-info { flex: 1; cursor: pointer; }
-        .ch-name { font-weight: bold; display: block; font-size: 0.95rem; }
-        .ch-group { font-size: 0.75rem; color: #666; text-transform: uppercase; margin-top: 2px; }
-
-        /* BOTÕES DE AÇÃO */
-        .actions { display: flex; gap: 8px; }
-        .btn-ext { 
-            background: #222; color: var(--primary); border: 1px solid #333; 
-            padding: 8px 12px; border-radius: 6px; text-decoration: none; 
-            font-size: 0.8rem; font-weight: bold; display: flex; align-items: center; gap: 5px;
-        }
-        .btn-ext:hover { background: var(--primary); color: white; }
-
-        /* MENSAGEM DE ERRO */
-        #status-msg { color: #ffeb3b; margin-top: 15px; font-size: 0.9rem; min-height: 20px;}
+        
+        .btn-vlc { background: #ff9800; color: #000; padding: 6px 12px; border-radius: 4px; text-decoration: none; font-weight: bold; font-size: 12px; }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
 <body>
 
-    <div id="setup-screen">
-        <h1>🐱 GATEOS TV</h1>
-        <p style="color:#aaa; margin-bottom:20px">Madrid Edition • Proxy Ativo</p>
-        
-        <div class="input-group">
-            <label class="btn-load" style="background:#222; border:1px solid #444; display:block; padding:12px">
-                📂 Abrir Arquivo .m3u
-                <input type="file" id="fileInput" accept=".m3u,.m3u8,.txt" style="display:none">
-            </label>
-
-            <div class="or-divider">— OU COLE O LINK DA LISTA —</div>
-
-            <input type="text" id="urlInput" class="url-input" placeholder="http://exemplo.com/lista.m3u">
-            <button class="btn-load" onclick="carregarViaProxy()">🚀 Carregar via Proxy</button>
-        </div>
-        <div id="status-msg"></div>
+    <div id="loading-screen">
+        <h1 style="font-family: 'Fredoka One'; color: #d32f2f;">GATEOSTV</h1>
+        <div class="spinner"></div>
+        <p id="status-msg" style="color:#666; margin-top:10px">Baixando lista do servidor...</p>
     </div>
 
-    <div id="app">
+    <div id="app" style="display:none; flex-direction:column; height:100%">
         <div id="video-area">
             <video id="video" controls autoplay playsinline></video>
-            <div class="video-status">
-                ⚠️ Se a bolinha girar, use o botão <b>"VLC"</b> ao lado do canal.
-            </div>
         </div>
 
         <div id="controls">
             <select id="groupSelect" onchange="filtrar()">
-                <option value="TODOS">🌍 TODOS OS CANALES</option>
+                <option value="TODOS">🌍 TODOS OS CANAIS</option>
             </select>
             <input type="text" id="searchInput" placeholder="🔍 Buscar canal..." onkeyup="filtrar()">
         </div>
 
-        <div id="channel-list">
-            </div>
+        <div id="channel-list"></div>
     </div>
 
     <script>
-        // SEU PROXY NO RENDER
-        const PROXY_URL = "https://gateostv-proxy.onrender.com/proxy?url=";
+        // ENDEREÇO DO SEU SERVIDOR
+        const URL_SERVIDOR = "https://gateostv-proxy.onrender.com/minhalista";
 
         let todosCanais = [];
         let categorias = new Set();
@@ -117,175 +69,111 @@
         const listContainer = document.getElementById('channel-list');
         const statusMsg = document.getElementById('status-msg');
 
-        // --- 1. CARREGAMENTO ---
-
-        // Via Arquivo (Upload)
-        document.getElementById('fileInput').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if(!file) return;
-            lerTexto(file);
+        // AO INICIAR
+        window.addEventListener('DOMContentLoaded', () => {
+            fetch(URL_SERVIDOR)
+                .then(res => {
+                    if (!res.ok) throw new Error("Erro ao baixar lista (Verifique se o arquivo está no Render)");
+                    return res.text();
+                })
+                .then(texto => processarLista(texto))
+                .catch(err => {
+                    statusMsg.innerText = "Erro: " + err.message;
+                    statusMsg.style.color = "red";
+                });
         });
 
-        function lerTexto(file) {
-            statusMsg.innerText = "Lendo arquivo...";
-            const reader = new FileReader();
-            reader.onload = (e) => processarLista(e.target.result);
-            reader.readAsText(file);
-        }
-
-        // Via Link (Usa seu Proxy para baixar)
-        function carregarViaProxy() {
-            const urlLista = document.getElementById('urlInput').value.trim();
-            if(!urlLista) return alert("Cole o link da lista!");
-
-            statusMsg.innerText = "Baixando lista via Proxy Render... 🐱";
-            
-            // Aqui a mágica: O frontend chama seu Render, o Render baixa a lista e devolve pro frontend
-            fetch(PROXY_URL + encodeURIComponent(urlLista))
-                .then(response => {
-                    if(!response.ok) throw new Error("Erro no Proxy");
-                    return response.text();
-                })
-                .then(texto => {
-                    processarLista(texto);
-                })
-                .catch(err => {
-                    statusMsg.innerText = "Erro ao baixar: " + err.message;
-                    statusMsg.style.color = "#f44336";
-                });
-        }
-
-        // --- 2. PROCESSAMENTO (Regenerado para funcionar melhor) ---
         function processarLista(texto) {
-            if(!texto.includes("#EXTM3U")) {
-                return alert("Isso não parece uma lista M3U válida!");
-            }
-
             todosCanais = [];
             categorias.clear();
             const linhas = texto.split('\n');
-            
-            let nome = "";
-            let grupo = "GERAL";
-            let logo = "";
+            let nome = "", grupo = "GERAL";
 
-            for(let i=0; i<linhas.length; i++) {
-                let linha = linhas[i].trim();
-
+            for(let linha of linhas) {
+                linha = linha.trim();
                 if(linha.startsWith("#EXTINF")) {
-                    // Tenta extrair grupo
-                    let matchGrupo = linha.match(/group-title="([^"]*)"/i);
-                    grupo = matchGrupo ? matchGrupo[1] : "GERAL";
+                    // Pega o grupo (Category)
+                    let match = linha.match(/group-title="([^"]*)"/i);
+                    grupo = match ? match[1] : "GERAL";
                     categorias.add(grupo);
-
-                    // Tenta extrair nome (após a vírgula)
+                    
+                    // Pega o nome (depois da vírgula)
                     let partes = linha.split(',');
-                    nome = partes[partes.length-1] || "Sem Nome";
-                
+                    nome = partes[partes.length - 1] || "Sem Nome";
                 } else if(linha.startsWith("http")) {
                     if(nome) {
                         todosCanais.push({ nome, grupo, url: linha });
-                        nome = ""; // Reseta para o próximo
                     }
                 }
             }
 
             if(todosCanais.length > 0) {
-                montarCategorias();
-                document.getElementById('setup-screen').style.display = 'none';
+                montarSelect();
+                document.getElementById('loading-screen').style.display = 'none';
                 document.getElementById('app').style.display = 'flex';
-                filtrar(); // Renderiza
+                filtrar();
             } else {
-                alert("Nenhum canal encontrado!");
+                statusMsg.innerText = "Lista vazia ou formato inválido!";
             }
         }
 
-        // --- 3. INTERFACE ---
-
-        function montarCategorias() {
-            const select = document.getElementById('groupSelect');
-            select.innerHTML = '<option value="TODOS">🌍 TODOS OS CANALES</option>';
-            
-            // Ordena alfabeticamente
-            const listaOrdenada = Array.from(categorias).sort();
-            
-            listaOrdenada.forEach(cat => {
-                const opt = document.createElement('option');
-                opt.value = cat;
+        function montarSelect() {
+            const sel = document.getElementById('groupSelect');
+            // Ordena categorias alfabeticamente
+            Array.from(categorias).sort().forEach(cat => {
+                let opt = document.createElement('option');
+                opt.value = cat; 
                 opt.innerText = "📂 " + cat;
-                select.appendChild(opt);
+                sel.appendChild(opt);
             });
         }
 
-        let timerBusca;
+        let timer;
         function filtrar() {
-            clearTimeout(timerBusca);
-            timerBusca = setTimeout(() => {
-                const grupoAtual = document.getElementById('groupSelect').value;
-                const termo = document.getElementById('searchInput').value.toLowerCase();
-
-                const filtrados = todosCanais.filter(canal => {
-                    const bateGrupo = (grupoAtual === 'TODOS') || (canal.grupo === grupoAtual);
-                    const bateNome = canal.nome.toLowerCase().includes(termo);
-                    return bateGrupo && bateNome;
-                });
-
-                renderizar(filtrados.slice(0, 100)); // Limite para não travar
+            clearTimeout(timer);
+            timer = setTimeout(() => {
+                const grp = document.getElementById('groupSelect').value;
+                const txt = document.getElementById('searchInput').value.toLowerCase();
+                
+                const res = todosCanais.filter(c => 
+                    (grp === 'TODOS' || c.grupo === grp) && 
+                    c.nome.toLowerCase().includes(txt)
+                );
+                
+                // Mostra só os primeiros 100 pra não travar o celular
+                renderizar(res.slice(0, 100));
             }, 300);
         }
 
         function renderizar(lista) {
             listContainer.innerHTML = "";
-            
-            lista.forEach(canal => {
+            lista.forEach(c => {
                 const div = document.createElement('div');
                 div.className = 'channel-row';
                 
-                // Link externo para App (VLC/WVC)
-                // vlc://http... força abrir o app
-                const linkVLC = `vlc://${canal.url}`; 
-                const linkWVC = `wvc-x-callback://open?url=${encodeURIComponent(canal.url)}`;
+                // Link direto para VLC (Força abrir app externo)
+                const vlcLink = `vlc://${c.url}`;
 
                 div.innerHTML = `
-                    <div class="ch-info" onclick="tocarNoSite('${canal.url}', this)">
-                        <span class="ch-name">${canal.nome}</span>
-                        <span class="ch-group">${canal.grupo}</span>
+                    <div style="flex:1" onclick="tocar('${c.url}', this)">
+                        <div style="font-weight:bold">${c.nome}</div>
+                        <div style="font-size:12px; color:#666">${c.grupo}</div>
                     </div>
-                    <div class="actions">
-                        <a href="${linkVLC}" class="btn-ext" style="color:#ff9800; border-color:#ff9800">
-                            VLC
-                        </a>
-                    </div>
+                    <a href="${vlcLink}" class="btn-vlc">VLC</a>
                 `;
                 listContainer.appendChild(div);
             });
-
-            if(lista.length === 0) listContainer.innerHTML = '<div style="padding:20px; text-align:center; color:#666">Nada encontrado...</div>';
         }
 
-        // --- 4. PLAYER ---
-        function tocarNoSite(url, elemento) {
-            // Destaque visual
-            document.querySelectorAll('.channel-row').forEach(row => row.classList.remove('active'));
-            if(elemento) elemento.parentElement.classList.add('active');
-
-            // Tenta HLS Nativo
+        function tocar(url, el) {
+            document.querySelectorAll('.channel-row').forEach(r => r.classList.remove('active'));
+            el.parentElement.classList.add('active');
+            
             if (Hls.isSupported()) {
-                const hls = new Hls();
-                hls.loadSource(url);
-                hls.attachMedia(video);
+                const hls = new Hls(); hls.loadSource(url); hls.attachMedia(video);
                 hls.on(Hls.Events.MANIFEST_PARSED, () => video.play());
-                
-                // Monitor de erro
-                hls.on(Hls.Events.ERROR, (event, data) => {
-                    if (data.fatal) {
-                       console.log("Erro HLS, tentando recuperar...");
-                       // Se falhar, não temos o que fazer no site HTTPS além de recomendar o VLC
-                    }
-                });
             } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                video.src = url;
-                video.play();
+                video.src = url; video.play();
             }
         }
     </script>
