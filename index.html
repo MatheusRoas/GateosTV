@@ -1,57 +1,89 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GATEOSTV – Madrid 🐱🇪🇸</title>
+    <title>GATEOSTV – Player Externo 🐱</title>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
-        :root { --primary: #d32f2f; --bg: #0a0a0a; --text: #e0e0e0; }
+        :root { --primary: #d32f2f; --bg: #0a0a0a; --card: #141414; --text: #e0e0e0; }
+        
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; display: flex; flex-direction: column; height: 100vh; }
         
-        /* TELA DE CARGA */
-        #loading-screen {
-            position: fixed; inset: 0; background: #000; z-index: 2000;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        /* TELA DE UPLOAD */
+        #upload-screen {
+            position: fixed; inset: 0; background: #050505; z-index: 2000;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px;
         }
-        .spinner { border: 4px solid #333; border-top: 4px solid var(--primary); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .upload-box {
+            border: 2px dashed var(--primary); padding: 40px; border-radius: 12px; cursor: pointer; background: #111; width: 100%; max-width: 300px;
+            transition: 0.2s;
+        }
+        .upload-box:active { transform: scale(0.98); background: #1a1a1a; }
+        h1 { font-family: 'Fredoka One'; color: var(--primary); font-size: 2.5rem; margin-bottom: 20px; }
 
-        /* PLAYER */
-        #video-area { flex-shrink: 0; background: black; position: sticky; top: 0; z-index: 100; border-bottom: 2px solid var(--primary); }
-        video { width: 100%; max-height: 35vh; display: block; }
+        /* LISTA PRINCIPAL */
+        #app { display: none; flex-direction: column; height: 100%; }
         
-        /* CONTROLES */
+        #header { padding: 15px; background: #000; border-bottom: 2px solid var(--primary); text-align: center; }
+        #header h2 { margin: 0; font-family: 'Fredoka One'; color: #fff; }
+
         #controls { padding: 10px; background: #111; display: flex; flex-direction: column; gap: 10px; }
-        select, input { padding: 12px; background: #222; border: 1px solid #333; color: white; border-radius: 6px; width: 100%; box-sizing: border-box; }
+        select, input { padding: 12px; background: #222; border: 1px solid #333; color: white; border-radius: 6px; width: 100%; box-sizing: border-box; font-size: 16px; }
         select { font-weight: bold; color: var(--primary); }
 
-        /* LISTA */
-        #channel-list { flex-grow: 1; overflow-y: auto; }
-        .channel-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; border-bottom: 1px solid #222; }
-        .channel-row:hover { background: #1a1a1a; }
-        .channel-row.active { background: #1a0505; border-left: 4px solid var(--primary); }
+        #channel-list { flex-grow: 1; overflow-y: auto; padding-bottom: 50px; }
         
-        .btn-vlc { background: #ff9800; color: #000; padding: 6px 12px; border-radius: 4px; text-decoration: none; font-weight: bold; font-size: 12px; }
+        /* CARTÃO DO CANAL */
+        .channel-card {
+            background: var(--card); border-bottom: 1px solid #222; padding: 15px;
+            display: flex; flex-direction: column; gap: 10px;
+        }
+        .ch-info { display: flex; justify-content: space-between; align-items: center; }
+        .ch-name { font-weight: bold; font-size: 16px; color: #fff; }
+        .ch-group { font-size: 11px; color: #888; background: #222; padding: 2px 6px; border-radius: 4px; }
+
+        /* BOTÕES DE PLAY */
+        .play-actions { display: flex; gap: 10px; }
+        
+        .btn {
+            flex: 1; border: none; padding: 10px; border-radius: 6px; font-weight: bold; 
+            font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px;
+            text-decoration: none; color: white;
+        }
+        
+        /* Botão Verde: Android Intent (Força abrir App) */
+        .btn-android { background: #2e7d32; } 
+        /* Botão Azul: Link Direto (PC/iOS) */
+        .btn-direct { background: #1565c0; }
+        
+        .note { font-size: 11px; color: #666; text-align: center; margin-top: 5px; }
+
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
 <body>
 
-    <div id="loading-screen">
-        <h1 style="font-family: 'Fredoka One'; color: #d32f2f;">GATEOSTV</h1>
-        <div class="spinner"></div>
-        <p id="status-msg" style="color:#666; margin-top:10px">Baixando lista do servidor...</p>
+    <div id="upload-screen">
+        <h1>GATEOS TV 🐱</h1>
+        <label class="upload-box">
+            <span class="material-icons" style="font-size: 50px; color: #d32f2f;">folder_open</span>
+            <p style="margin: 10px 0 0; font-weight: bold;">Toca para cargar lista .m3u</p>
+            <input type="file" id="fileInput" accept=".m3u,.m3u8,.txt" style="display:none">
+        </label>
+        <p style="color: #666; font-size: 12px; margin-top: 20px;">
+            Funciona con enlaces HTTP inseguros usando VLC/MX Player.
+        </p>
     </div>
 
-    <div id="app" style="display:none; flex-direction:column; height:100%">
-        <div id="video-area">
-            <video id="video" controls autoplay playsinline></video>
+    <div id="app">
+        <div id="header">
+            <h2>🐱 Canales</h2>
         </div>
 
         <div id="controls">
             <select id="groupSelect" onchange="filtrar()">
-                <option value="TODOS">🌍 TODOS OS CANAIS</option>
+                <option value="TODOS">🌍 TODOS LOS CANALES</option>
             </select>
             <input type="text" id="searchInput" placeholder="🔍 Buscar canal..." onkeyup="filtrar()">
         </div>
@@ -60,70 +92,59 @@
     </div>
 
     <script>
-        // ENDEREÇO DO SEU SERVIDOR
-        const URL_SERVIDOR = "https://gateostv-proxy.onrender.com/minhalista";
-
-        let todosCanais = [];
+        let todosCanales = [];
         let categorias = new Set();
-        const video = document.getElementById('video');
+        
+        const fileInput = document.getElementById('fileInput');
         const listContainer = document.getElementById('channel-list');
-        const statusMsg = document.getElementById('status-msg');
 
-        // AO INICIAR
-        window.addEventListener('DOMContentLoaded', () => {
-            fetch(URL_SERVIDOR)
-                .then(res => {
-                    if (!res.ok) throw new Error("Erro ao baixar lista (Verifique se o arquivo está no Render)");
-                    return res.text();
-                })
-                .then(texto => processarLista(texto))
-                .catch(err => {
-                    statusMsg.innerText = "Erro: " + err.message;
-                    statusMsg.style.color = "red";
-                });
+        // 1. LER ARQUIVO
+        fileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if(!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (e) => processarM3U(e.target.result);
+            reader.readAsText(file);
         });
 
-        function processarLista(texto) {
-            todosCanais = [];
+        // 2. PROCESSAR
+        function processarM3U(texto) {
+            todosCanales = [];
             categorias.clear();
-            const linhas = texto.split('\n');
-            let nome = "", grupo = "GERAL";
+            const lines = texto.split('\n');
+            let nome = "", grupo = "General";
 
-            for(let linha of linhas) {
-                linha = linha.trim();
+            for(let i=0; i<lines.length; i++) {
+                let linha = lines[i].trim();
                 if(linha.startsWith("#EXTINF")) {
-                    // Pega o grupo (Category)
                     let match = linha.match(/group-title="([^"]*)"/i);
-                    grupo = match ? match[1] : "GERAL";
+                    grupo = match ? match[1] : "General";
                     categorias.add(grupo);
-                    
-                    // Pega o nome (depois da vírgula)
-                    let partes = linha.split(',');
-                    nome = partes[partes.length - 1] || "Sem Nome";
+                    nome = linha.split(',').pop();
                 } else if(linha.startsWith("http")) {
                     if(nome) {
-                        todosCanais.push({ nome, grupo, url: linha });
+                        todosCanales.push({ nome, grupo, url: linha });
+                        nome = ""; // Reset
                     }
                 }
             }
 
-            if(todosCanais.length > 0) {
+            if(todosCanales.length > 0) {
                 montarSelect();
-                document.getElementById('loading-screen').style.display = 'none';
+                document.getElementById('upload-screen').style.display = 'none';
                 document.getElementById('app').style.display = 'flex';
                 filtrar();
             } else {
-                statusMsg.innerText = "Lista vazia ou formato inválido!";
+                alert("Lista vacía o inválida");
             }
         }
 
         function montarSelect() {
             const sel = document.getElementById('groupSelect');
-            // Ordena categorias alfabeticamente
             Array.from(categorias).sort().forEach(cat => {
                 let opt = document.createElement('option');
-                opt.value = cat; 
-                opt.innerText = "📂 " + cat;
+                opt.value = cat; opt.innerText = "📂 " + cat;
                 sel.appendChild(opt);
             });
         }
@@ -134,47 +155,56 @@
             timer = setTimeout(() => {
                 const grp = document.getElementById('groupSelect').value;
                 const txt = document.getElementById('searchInput').value.toLowerCase();
-                
-                const res = todosCanais.filter(c => 
-                    (grp === 'TODOS' || c.grupo === grp) && 
-                    c.nome.toLowerCase().includes(txt)
+                const res = todosCanales.filter(c => 
+                    (grp === 'TODOS' || c.grupo === grp) && c.nome.toLowerCase().includes(txt)
                 );
-                
-                // Mostra só os primeiros 100 pra não travar o celular
-                renderizar(res.slice(0, 100));
+                renderizar(res.slice(0, 100)); // Limite de 100 para performance
             }, 300);
         }
 
+        // 3. RENDERIZAR COM BOTÕES DE AÇÃO EXTERNA
         function renderizar(lista) {
             listContainer.innerHTML = "";
+            
+            if(lista.length === 0) {
+                listContainer.innerHTML = '<p style="text-align:center; padding:20px; color:#666">Nada...</p>';
+                return;
+            }
+
             lista.forEach(c => {
                 const div = document.createElement('div');
-                div.className = 'channel-row';
-                
-                // Link direto para VLC (Força abrir app externo)
-                const vlcLink = `vlc://${c.url}`;
+                div.className = 'channel-card';
+
+                // TRUQUE DO ANDROID: Intent Genérico
+                // Isso força o Android a abrir a caixa "Abrir com..."
+                // Funciona para HTTP e HTTPS
+                const androidIntent = `intent:${c.url}#Intent;action=android.intent.action.VIEW;type=video/*;end`;
 
                 div.innerHTML = `
-                    <div style="flex:1" onclick="tocar('${c.url}', this)">
-                        <div style="font-weight:bold">${c.nome}</div>
-                        <div style="font-size:12px; color:#666">${c.grupo}</div>
+                    <div class="ch-info">
+                        <span class="ch-name">${c.nome}</span>
+                        <span class="ch-group">${c.grupo}</span>
                     </div>
-                    <a href="${vlcLink}" class="btn-vlc">VLC</a>
+                    <div class="play-actions">
+                        <a href="${androidIntent}" class="btn btn-android">
+                            <span class="material-icons">android</span> Play Móvil
+                        </a>
+                        <a href="${c.url}" class="btn btn-direct" target="_blank">
+                            <span class="material-icons">computer</span> Play PC/Web
+                        </a>
+                    </div>
+                    <div class="note" onclick="copiarLink('${c.url}')" style="cursor:pointer">
+                         📋 Toca aquí para copiar enlace (si falla)
+                    </div>
                 `;
                 listContainer.appendChild(div);
             });
         }
 
-        function tocar(url, el) {
-            document.querySelectorAll('.channel-row').forEach(r => r.classList.remove('active'));
-            el.parentElement.classList.add('active');
-            
-            if (Hls.isSupported()) {
-                const hls = new Hls(); hls.loadSource(url); hls.attachMedia(video);
-                hls.on(Hls.Events.MANIFEST_PARSED, () => video.play());
-            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                video.src = url; video.play();
-            }
+        function copiarLink(url) {
+            navigator.clipboard.writeText(url).then(() => {
+                alert("Enlace copiado! Pégalo en VLC.");
+            });
         }
     </script>
 </body>
