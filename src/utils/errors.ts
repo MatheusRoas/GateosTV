@@ -23,12 +23,16 @@ export class AppError extends Error {
       context?: Record<string, unknown>;
     } = {}
   ) {
-    super(message, options.cause ? { cause: options.cause } : undefined);
+    super(message);
     this.name = 'AppError';
     this.code = options.code ?? 'unknown';
     this.statusCode = options.statusCode;
     this.retriable = options.retriable ?? false;
     this.context = options.context;
+
+    if (options.cause !== undefined) {
+      (this as Error & { cause?: unknown }).cause = options.cause;
+    }
   }
 }
 

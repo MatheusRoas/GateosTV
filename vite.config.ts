@@ -20,6 +20,7 @@ export default defineConfig({
     alias: {
       '@': path.resolve(__dirname, './src'),
       '@components': path.resolve(__dirname, './src/components'),
+      '@config': path.resolve(__dirname, './src/config'),
       '@features': path.resolve(__dirname, './src/features'),
       '@hooks': path.resolve(__dirname, './src/hooks'),
       '@layouts': path.resolve(__dirname, './src/layouts'),
@@ -40,9 +41,7 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          'react-vendor': ['react', 'react-dom', 'react-router'],
-          'chart-vendor': ['chart.js', 'react-chartjs-2'],
-          'motion-vendor': ['framer-motion'],
+          'react-vendor': ['react', 'react-dom'],
           'zustand-vendor': ['zustand']
         }
       }

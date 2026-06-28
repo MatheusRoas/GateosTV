@@ -22,7 +22,7 @@ const defaultState: Pick<ConnectionStoreState, 'isOnline' | 'lastUpdate' | 'stat
   pendingRequests: 0
 };
 
-const persistConnectionState = (state: ConnectionStoreState): void => {
+const persistConnectionState = (state: Partial<ConnectionStoreState>): void => {
   storageService.set(STORAGE_KEYS.connectionState, {
     isOnline: state.isOnline,
     lastUpdate: state.lastUpdate,
@@ -35,7 +35,7 @@ const persistConnectionState = (state: ConnectionStoreState): void => {
 const readPersistedConnection = () =>
   storageService.get<Partial<ConnectionStoreState>>(STORAGE_KEYS.connectionState, null);
 
-export const useConnectionStore = create<ConnectionStoreState>((set, get) => ({
+export const useConnectionStore = create<ConnectionStoreState>((set) => ({
   ...defaultState,
   errorMessage: undefined,
   startRequest: () => {
@@ -52,38 +52,40 @@ export const useConnectionStore = create<ConnectionStoreState>((set, get) => ({
   },
   setOnlineStatus: (isOnline) => {
     set((state) => {
-      const nextState = {
-        ...state,
+      const nextStatus: ConnectionState['status'] = isOnline
+        ? state.pendingRequests > 0
+          ? 'updating'
+          : 'connected'
+        : 'offline';
+      const nextState: Partial<ConnectionStoreState> = {
         isOnline,
-        status: isOnline ? (state.pendingRequests > 0 ? 'updating' : 'connected') : 'offline',
+        status: nextStatus,
         errorMessage: isOnline ? undefined : 'Sin conexion a Internet'
       };
-      persistConnectionState(nextState);
+      persistConnectionState({ ...state, ...nextState });
       return nextState;
     });
   },
   markHealthy: (latencyMs = null) => {
     set((state) => {
-      const nextState = {
-        ...state,
+      const nextState: Partial<ConnectionStoreState> = {
         latencyMs,
         lastUpdate: new Date().toISOString(),
         status: state.pendingRequests > 0 ? 'updating' : 'connected',
         errorMessage: undefined
       };
-      persistConnectionState(nextState);
+      persistConnectionState({ ...state, ...nextState });
       return nextState;
     });
   },
   setError: (message) => {
     set((state) => {
-      const nextState = {
-        ...state,
+      const nextState: Partial<ConnectionStoreState> = {
         lastUpdate: new Date().toISOString(),
         status: state.isOnline ? 'error' : 'offline',
         errorMessage: message
       };
-      persistConnectionState(nextState);
+      persistConnectionState({ ...state, ...nextState });
       return nextState;
     });
   },

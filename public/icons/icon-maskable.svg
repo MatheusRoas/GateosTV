@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title>Icono maskable Mundial 2026</title>
+  <desc>Emblema del torneo con fondo azul y detalles dorados</desc>
+  <rect width="512" height="512" rx="164" fill="#0055ff" />
+  <rect x="56" y="56" width="400" height="400" rx="120" fill="#0f172a" />
+  <circle cx="256" cy="250" r="126" fill="#ffffff" opacity="0.96" />
+  <circle cx="256" cy="250" r="78" fill="#0055ff" />
+  <path d="M256 183l29 19-9 33h-40l-9-33 29-19zm-62 46l27 9 8 31-25 19-31-13 21-46zm124 0l21 46-31 13-25-19 8-31 27-9zm-77 77h30l10 33-25 19-25-19 10-33zm95-4l23 18c-14 35-39 67-69 94l-8-39 54-73zm-160 0l54 73-8 39c-30-27-55-59-69-94l23-18z" fill="#ffd700" />
+  <path d="M256 88l21 43 47 7-34 33 8 47-42-22-42 22 8-47-34-33 47-7 21-43z" fill="#ffd700" />
+</svg>

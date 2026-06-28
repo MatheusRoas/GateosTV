@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title>Icono Mundial 2026</title>
+  <desc>Escudo azul con un balon y una estrella dorada</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#0055ff" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="120" fill="url(#bg)" />
+  <path d="M256 86l82 46v92c0 74-33 142-82 188-49-46-82-114-82-188v-92l82-46z" fill="#ffffff" fill-opacity="0.94" />
+  <circle cx="256" cy="230" r="72" fill="#0f172a" />
+  <path d="M256 170l27 17-8 31h-38l-8-31 27-17zm-57 42l25 9 8 29-24 18-28-12 19-44zm114 0l19 44-28 12-24-18 8-29 25-9zm-71 71h28l9 30-23 18-23-18 9-30zm86-4l21 17c-13 31-36 60-63 84l-8-35 50-66zm-144 0l50 66-8 35c-27-24-50-53-63-84l21-17z" fill="#ffd700" />
+  <path d="M256 60l18 37 41 6-29 29 7 41-37-19-37 19 7-41-29-29 41-6 18-37z" fill="#ffd700" />
+</svg>

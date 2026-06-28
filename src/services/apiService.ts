@@ -12,6 +12,8 @@ interface MatchFilters {
   limit?: number;
 }
 
+type QueryParams = Record<string, string | number | undefined>;
+
 interface SearchResult {
   teams: Team[];
   matches: Match[];
@@ -24,7 +26,7 @@ const delay = async (ms: number): Promise<void> => {
 
 const getTimestamp = (): number => (typeof performance !== 'undefined' ? performance.now() : Date.now());
 
-const buildUrl = (endpoint: string, query?: Record<string, string | number | undefined>): string => {
+const buildUrl = (endpoint: string, query?: QueryParams): string => {
   if (!API_CONFIG.baseUrl) {
     throw new Error('La base URL de la API no esta configurada');
   }
@@ -40,7 +42,7 @@ const buildUrl = (endpoint: string, query?: Record<string, string | number | und
 };
 
 class ApiService {
-  private async request<T>(endpoint: string, query?: Record<string, string | number | undefined>): Promise<T> {
+  private async request<T>(endpoint: string, query?: QueryParams): Promise<T> {
     const connectionStore = useConnectionStore.getState();
     const startTime = getTimestamp();
     let lastError: unknown;
@@ -116,7 +118,7 @@ class ApiService {
 
   async getMatches(filters: MatchFilters = {}): Promise<Match[]> {
     return this.withFallback(
-      () => this.request<Match[]>(API_ENDPOINTS.matches, filters),
+      () => this.request<Match[]>(API_ENDPOINTS.matches, filters as QueryParams),
       () => mockApiService.getMatches(filters)
     );
   }
