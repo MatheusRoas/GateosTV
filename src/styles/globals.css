@@ -1,0 +1,175 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+  --surface: 255 255 255;
+  --surface-muted: 248 250 252;
+  --text-main: 15 23 42;
+  --text-muted: 71 85 105;
+  --ring: 0 85 255;
+}
+
+:root.dark {
+  color-scheme: dark;
+  --surface: 3 6 18;
+  --surface-muted: 15 23 42;
+  --text-main: 241 245 249;
+  --text-muted: 148 163 184;
+  --ring: 94 170 255;
+}
+
+* {
+  @apply box-border;
+}
+
+html {
+  @apply scroll-smooth;
+}
+
+body {
+  @apply min-h-screen bg-slate-50 font-sans text-slate-900 antialiased transition-colors duration-300;
+  background-image: radial-gradient(circle at top, rgba(0, 85, 255, 0.08), transparent 35%);
+}
+
+:root.dark body {
+  @apply bg-dark-950 text-slate-100;
+  background-image: radial-gradient(circle at top, rgba(0, 85, 255, 0.2), transparent 35%);
+}
+
+body,
+#root {
+  min-height: 100vh;
+}
+
+img {
+  @apply block max-w-full;
+}
+
+button,
+a {
+  @apply transition-all duration-200;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  @apply outline-none ring-2 ring-primary ring-offset-2 ring-offset-white;
+}
+
+:root.dark button:focus-visible,
+:root.dark a:focus-visible,
+:root.dark input:focus-visible,
+:root.dark textarea:focus-visible,
+:root.dark select:focus-visible {
+  @apply ring-offset-dark-950;
+}
+
+::selection {
+  @apply bg-primary/20 text-primary;
+}
+
+@layer components {
+  .surface-card {
+    @apply rounded-3xl border border-white/70 bg-white/85 shadow-lg shadow-slate-200/50 backdrop-blur;
+  }
+
+  :root.dark .surface-card {
+    @apply border-white/10 bg-dark-900/90 shadow-black/20;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-2xl bg-primary px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-primary/20 hover:-translate-y-0.5 hover:bg-blue-600 disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 hover:border-primary/30 hover:text-primary;
+  }
+
+  :root.dark .btn-secondary {
+    @apply border-white/10 bg-dark-900 text-slate-200 hover:border-primary/40 hover:text-white;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-2xl px-4 py-3 text-sm font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900;
+  }
+
+  :root.dark .btn-ghost {
+    @apply text-slate-300 hover:bg-white/5 hover:text-white;
+  }
+
+  .pill {
+    @apply inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white/80 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-slate-500;
+  }
+
+  :root.dark .pill {
+    @apply border-white/10 bg-white/5 text-slate-300;
+  }
+
+  .status-dot {
+    @apply h-2.5 w-2.5 rounded-full;
+  }
+
+  .input-shell {
+    @apply rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-800 shadow-sm placeholder:text-slate-400 focus:border-primary;
+  }
+
+  :root.dark .input-shell {
+    @apply border-white/10 bg-dark-900 text-slate-100 placeholder:text-slate-500;
+  }
+
+  .skeleton {
+    @apply animate-pulse rounded-2xl bg-slate-200/80;
+  }
+
+  :root.dark .skeleton {
+    @apply bg-white/10;
+  }
+
+  .table-shell {
+    @apply overflow-hidden rounded-3xl border border-slate-200 bg-white/80;
+  }
+
+  :root.dark .table-shell {
+    @apply border-white/10 bg-dark-900/90;
+  }
+}
+
+@supports (padding: max(0px)) {
+  body {
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+}
+
+main {
+  padding-bottom: calc(5rem + env(safe-area-inset-bottom));
+}
+
+@media (min-width: 768px) {
+  main {
+    padding-bottom: 2rem;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply rounded-full bg-slate-300;
+}
+
+:root.dark ::-webkit-scrollbar-thumb {
+  @apply bg-slate-700;
+}

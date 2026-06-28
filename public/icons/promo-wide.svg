@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" role="img" aria-labelledby="title desc">
+  <title>Vista promocional Mundial 2026</title>
+  <desc>Pantalla panoramica con marcador, calendario y clasificaciones del Mundial 2026</desc>
+  <defs>
+    <linearGradient id="background" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#020617" />
+      <stop offset="55%" stop-color="#0f172a" />
+      <stop offset="100%" stop-color="#0055ff" />
+    </linearGradient>
+  </defs>
+  <rect width="1280" height="720" fill="url(#background)" />
+  <circle cx="980" cy="110" r="180" fill="#60a5fa" opacity="0.18" />
+  <circle cx="240" cy="650" r="220" fill="#22d3ee" opacity="0.12" />
+  <rect x="72" y="72" width="1136" height="576" rx="36" fill="#ffffff" opacity="0.08" stroke="#ffffff" stroke-opacity="0.14" />
+  <text x="110" y="160" fill="#ffffff" font-family="Inter, Arial, sans-serif" font-size="34" font-weight="600">Mundial FIFA 2026</text>
+  <text x="110" y="205" fill="#cbd5e1" font-family="Inter, Arial, sans-serif" font-size="22">Calendario, grupos y favoritos en una sola PWA</text>
+  <rect x="110" y="255" width="500" height="300" rx="28" fill="#0f172a" stroke="#60a5fa" stroke-opacity="0.35" />
+  <text x="145" y="310" fill="#93c5fd" font-family="Inter, Arial, sans-serif" font-size="18">PARTIDO DESTACADO</text>
+  <text x="145" y="370" fill="#ffffff" font-family="Outfit, Arial, sans-serif" font-size="42" font-weight="700">España 2 - 1 Marruecos</text>
+  <text x="145" y="420" fill="#cbd5e1" font-family="Inter, Arial, sans-serif" font-size="24">Semifinales · 14 julio 2026 · Atlanta</text>
+  <rect x="670" y="255" width="230" height="300" rx="28" fill="#0f172a" stroke="#ffffff" stroke-opacity="0.16" />
+  <text x="705" y="310" fill="#93c5fd" font-family="Inter, Arial, sans-serif" font-size="18">GRUPO A</text>
+  <text x="705" y="360" fill="#ffffff" font-family="Inter, Arial, sans-serif" font-size="24">1. Mexico</text>
+  <text x="705" y="400" fill="#ffffff" font-family="Inter, Arial, sans-serif" font-size="24">2. Suiza</text>
+  <text x="705" y="440" fill="#ffffff" font-family="Inter, Arial, sans-serif" font-size="24">3. Ghana</text>
+  <text x="705" y="480" fill="#ffffff" font-family="Inter, Arial, sans-serif" font-size="24">4. Uzbekistan</text>
+  <rect x="930" y="255" width="230" height="300" rx="28" fill="#ffffff" opacity="0.95" />
+  <text x="965" y="310" fill="#0f172a" font-family="Inter, Arial, sans-serif" font-size="18">RESUMEN</text>
+  <text x="965" y="365" fill="#0055ff" font-family="Outfit, Arial, sans-serif" font-size="46" font-weight="700">104</text>
+  <text x="965" y="398" fill="#334155" font-family="Inter, Arial, sans-serif" font-size="22">partidos</text>
+  <text x="965" y="460" fill="#0055ff" font-family="Outfit, Arial, sans-serif" font-size="46" font-weight="700">48</text>
+  <text x="965" y="493" fill="#334155" font-family="Inter, Arial, sans-serif" font-size="22">selecciones</text>
+</svg>

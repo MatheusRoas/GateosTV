@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Modo Offline</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
+          Cantarell, sans-serif;
+        background: linear-gradient(135deg, #0a0e1a 0%, #1a1a2e 100%);
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        padding: 20px;
+      }
+      .container {
+        text-align: center;
+        max-width: 500px;
+      }
+      .icon {
+        font-size: 80px;
+        margin-bottom: 20px;
+      }
+      h1 {
+        font-size: 32px;
+        margin-bottom: 10px;
+        font-weight: 700;
+      }
+      p {
+        font-size: 16px;
+        color: #b0b0b0;
+        margin-bottom: 30px;
+        line-height: 1.6;
+      }
+      .info {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 30px;
+        border-left: 4px solid #0055ff;
+      }
+      .info h2 {
+        font-size: 18px;
+        margin-bottom: 10px;
+        color: #0055ff;
+      }
+      .info p {
+        font-size: 14px;
+        color: #d0d0d0;
+        margin: 0;
+      }
+      .button {
+        display: inline-block;
+        background: #0055ff;
+        color: white;
+        padding: 12px 30px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: background 0.3s;
+      }
+      .button:hover {
+        background: #0047dd;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="icon">signal_cellular_off</div>
+      <h1>Sin Conexion</h1>
+      <p>Parece que no tienes conexion a internet. Por favor, verifica tu conexion e intenta nuevamente.</p>
+      <div class="info">
+        <h2>Datos Disponibles Offline</h2>
+        <p>
+          Puedes consultar los datos almacenados localmente mientras recuperas la conexion.
+        </p>
+      </div>
+      <a href="/" class="button">Ir a la Aplicacion</a>
+    </div>
+  </body>
+</html>

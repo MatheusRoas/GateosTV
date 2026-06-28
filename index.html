@@ -1,211 +1,26 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GATEOSTV – Player Externo 🐱</title>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <style>
-        :root { --primary: #d32f2f; --bg: #0a0a0a; --card: #141414; --text: #e0e0e0; }
-        
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; display: flex; flex-direction: column; height: 100vh; }
-        
-        /* TELA DE UPLOAD */
-        #upload-screen {
-            position: fixed; inset: 0; background: #050505; z-index: 2000;
-            display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px;
-        }
-        .upload-box {
-            border: 2px dashed var(--primary); padding: 40px; border-radius: 12px; cursor: pointer; background: #111; width: 100%; max-width: 300px;
-            transition: 0.2s;
-        }
-        .upload-box:active { transform: scale(0.98); background: #1a1a1a; }
-        h1 { font-family: 'Fredoka One'; color: var(--primary); font-size: 2.5rem; margin-bottom: 20px; }
-
-        /* LISTA PRINCIPAL */
-        #app { display: none; flex-direction: column; height: 100%; }
-        
-        #header { padding: 15px; background: #000; border-bottom: 2px solid var(--primary); text-align: center; }
-        #header h2 { margin: 0; font-family: 'Fredoka One'; color: #fff; }
-
-        #controls { padding: 10px; background: #111; display: flex; flex-direction: column; gap: 10px; }
-        select, input { padding: 12px; background: #222; border: 1px solid #333; color: white; border-radius: 6px; width: 100%; box-sizing: border-box; font-size: 16px; }
-        select { font-weight: bold; color: var(--primary); }
-
-        #channel-list { flex-grow: 1; overflow-y: auto; padding-bottom: 50px; }
-        
-        /* CARTÃO DO CANAL */
-        .channel-card {
-            background: var(--card); border-bottom: 1px solid #222; padding: 15px;
-            display: flex; flex-direction: column; gap: 10px;
-        }
-        .ch-info { display: flex; justify-content: space-between; align-items: center; }
-        .ch-name { font-weight: bold; font-size: 16px; color: #fff; }
-        .ch-group { font-size: 11px; color: #888; background: #222; padding: 2px 6px; border-radius: 4px; }
-
-        /* BOTÕES DE PLAY */
-        .play-actions { display: flex; gap: 10px; }
-        
-        .btn {
-            flex: 1; border: none; padding: 10px; border-radius: 6px; font-weight: bold; 
-            font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px;
-            text-decoration: none; color: white;
-        }
-        
-        /* Botão Verde: Android Intent (Força abrir App) */
-        .btn-android { background: #2e7d32; } 
-        /* Botão Azul: Link Direto (PC/iOS) */
-        .btn-direct { background: #1565c0; }
-        
-        .note { font-size: 11px; color: #666; text-align: center; margin-top: 5px; }
-
-    </style>
-</head>
-<body>
-
-    <div id="upload-screen">
-        <h1>GATEOS TV 🐱</h1>
-        <label class="upload-box">
-            <span class="material-icons" style="font-size: 50px; color: #d32f2f;">folder_open</span>
-            <p style="margin: 10px 0 0; font-weight: bold;">Toca para cargar lista .m3u</p>
-            <input type="file" id="fileInput" accept=".m3u,.m3u8,.txt" style="display:none">
-        </label>
-        <p style="color: #666; font-size: 12px; margin-top: 20px;">
-            Funciona con enlaces HTTP inseguros usando VLC/MX Player.
-        </p>
-    </div>
-
-    <div id="app">
-        <div id="header">
-            <h2>🐱 Canales</h2>
-        </div>
-
-        <div id="controls">
-            <select id="groupSelect" onchange="filtrar()">
-                <option value="TODOS">🌍 TODOS LOS CANALES</option>
-            </select>
-            <input type="text" id="searchInput" placeholder="🔍 Buscar canal..." onkeyup="filtrar()">
-        </div>
-
-        <div id="channel-list"></div>
-    </div>
-
-    <script>
-        let todosCanales = [];
-        let categorias = new Set();
-        
-        const fileInput = document.getElementById('fileInput');
-        const listContainer = document.getElementById('channel-list');
-
-        // 1. LER ARQUIVO
-        fileInput.addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if(!file) return;
-
-            const reader = new FileReader();
-            reader.onload = (e) => processarM3U(e.target.result);
-            reader.readAsText(file);
-        });
-
-        // 2. PROCESSAR
-        function processarM3U(texto) {
-            todosCanales = [];
-            categorias.clear();
-            const lines = texto.split('\n');
-            let nome = "", grupo = "General";
-
-            for(let i=0; i<lines.length; i++) {
-                let linha = lines[i].trim();
-                if(linha.startsWith("#EXTINF")) {
-                    let match = linha.match(/group-title="([^"]*)"/i);
-                    grupo = match ? match[1] : "General";
-                    categorias.add(grupo);
-                    nome = linha.split(',').pop();
-                } else if(linha.startsWith("http")) {
-                    if(nome) {
-                        todosCanales.push({ nome, grupo, url: linha });
-                        nome = ""; // Reset
-                    }
-                }
-            }
-
-            if(todosCanales.length > 0) {
-                montarSelect();
-                document.getElementById('upload-screen').style.display = 'none';
-                document.getElementById('app').style.display = 'flex';
-                filtrar();
-            } else {
-                alert("Lista vacía o inválida");
-            }
-        }
-
-        function montarSelect() {
-            const sel = document.getElementById('groupSelect');
-            Array.from(categorias).sort().forEach(cat => {
-                let opt = document.createElement('option');
-                opt.value = cat; opt.innerText = "📂 " + cat;
-                sel.appendChild(opt);
-            });
-        }
-
-        let timer;
-        function filtrar() {
-            clearTimeout(timer);
-            timer = setTimeout(() => {
-                const grp = document.getElementById('groupSelect').value;
-                const txt = document.getElementById('searchInput').value.toLowerCase();
-                const res = todosCanales.filter(c => 
-                    (grp === 'TODOS' || c.grupo === grp) && c.nome.toLowerCase().includes(txt)
-                );
-                renderizar(res.slice(0, 100)); // Limite de 100 para performance
-            }, 300);
-        }
-
-        // 3. RENDERIZAR COM BOTÕES DE AÇÃO EXTERNA
-        function renderizar(lista) {
-            listContainer.innerHTML = "";
-            
-            if(lista.length === 0) {
-                listContainer.innerHTML = '<p style="text-align:center; padding:20px; color:#666">Nada...</p>';
-                return;
-            }
-
-            lista.forEach(c => {
-                const div = document.createElement('div');
-                div.className = 'channel-card';
-
-                // TRUQUE DO ANDROID: Intent Genérico
-                // Isso força o Android a abrir a caixa "Abrir com..."
-                // Funciona para HTTP e HTTPS
-                const androidIntent = `intent:${c.url}#Intent;action=android.intent.action.VIEW;type=video/*;end`;
-
-                div.innerHTML = `
-                    <div class="ch-info">
-                        <span class="ch-name">${c.nome}</span>
-                        <span class="ch-group">${c.grupo}</span>
-                    </div>
-                    <div class="play-actions">
-                        <a href="${androidIntent}" class="btn btn-android">
-                            <span class="material-icons">android</span> Play Móvil
-                        </a>
-                        <a href="${c.url}" class="btn btn-direct" target="_blank">
-                            <span class="material-icons">computer</span> Play PC/Web
-                        </a>
-                    </div>
-                    <div class="note" onclick="copiarLink('${c.url}')" style="cursor:pointer">
-                         📋 Toca aquí para copiar enlace (si falla)
-                    </div>
-                `;
-                listContainer.appendChild(div);
-            });
-        }
-
-        function copiarLink(url) {
-            navigator.clipboard.writeText(url).then(() => {
-                alert("Enlace copiado! Pégalo en VLC.");
-            });
-        }
-    </script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/icons/icon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Aplicacion progresiva del Mundial 2026 con calendario, grupos, favoritos y modo sin conexion"
+    />
+    <meta name="theme-color" content="#0055ff" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Mundial 2026" />
+    <link rel="apple-touch-icon" href="/icons/icon.svg" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <title>Mundial FIFA 2026</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
 </html>
