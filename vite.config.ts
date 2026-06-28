@@ -1,0 +1,55 @@
+import react from '@vitejs/plugin-react';
+import { defineConfig } from 'vite';
+import { VitePWA } from 'vite-plugin-pwa';
+import path from 'path';
+
+export default defineConfig({
+  plugins: [
+    react(),
+    VitePWA({
+      registerType: 'autoUpdate',
+      injectRegister: 'auto',
+      strategies: 'injectManifest',
+      srcDir: 'src/workers',
+      filename: 'service-worker.ts',
+      manifest: false,
+      includeAssets: ['icons/icon.svg', 'icons/icon-maskable.svg', 'icons/promo-wide.svg']
+    })
+  ],
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src'),
+      '@components': path.resolve(__dirname, './src/components'),
+      '@features': path.resolve(__dirname, './src/features'),
+      '@hooks': path.resolve(__dirname, './src/hooks'),
+      '@layouts': path.resolve(__dirname, './src/layouts'),
+      '@pages': path.resolve(__dirname, './src/pages'),
+      '@services': path.resolve(__dirname, './src/services'),
+      '@store': path.resolve(__dirname, './src/store'),
+      '@types': path.resolve(__dirname, './src/types'),
+      '@utils': path.resolve(__dirname, './src/utils'),
+      '@constants': path.resolve(__dirname, './src/constants'),
+      '@assets': path.resolve(__dirname, './src/assets'),
+      '@mocks': path.resolve(__dirname, './src/mocks')
+    }
+  },
+  build: {
+    outDir: 'dist',
+    sourcemap: false,
+    minify: 'esbuild',
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom', 'react-router'],
+          'chart-vendor': ['chart.js', 'react-chartjs-2'],
+          'motion-vendor': ['framer-motion'],
+          'zustand-vendor': ['zustand']
+        }
+      }
+    }
+  },
+  server: {
+    port: 5173,
+    host: true
+  }
+});
