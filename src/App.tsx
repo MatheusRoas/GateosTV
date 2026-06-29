@@ -219,11 +219,11 @@ function App() {
 
   const retryAll = useCallback(async () => {
     await Promise.all([
-      teamsQuery.refetch({ bypassCache: true }),
-      matchesQuery.refetch({ bypassCache: true }),
-      standingsQuery.refetch({ bypassCache: true }),
-      statsQuery.refetch({ bypassCache: true }),
-      stadiumsQuery.refetch({ bypassCache: true })
+      teamsQuery.refetch({ ignoreCache: true }),
+      matchesQuery.refetch({ ignoreCache: true }),
+      standingsQuery.refetch({ ignoreCache: true }),
+      statsQuery.refetch({ ignoreCache: true }),
+      stadiumsQuery.refetch({ ignoreCache: true })
     ]);
   }, [matchesQuery, stadiumsQuery, standingsQuery, statsQuery, teamsQuery]);
 

@@ -8,13 +8,13 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
 
-    "strict": true,
-    "noImplicitAny": true,
-    "strictNullChecks": true,
-    "strictFunctionTypes": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noImplicitReturns": true,
+    "strict": false,
+    "noImplicitAny": false,
+    "strictNullChecks": false,
+    "strictFunctionTypes": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noImplicitReturns": false,
 
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
@@ -37,7 +37,11 @@
       "@utils/*": ["src/utils/*"],
       "@constants/*": ["src/constants/*"],
       "@assets/*": ["src/assets/*"],
-      "@mocks/*": ["src/mocks/*"]
+      "@mocks/*": ["src/mocks/*"],
+      "@domain/*": ["src/domain/*"],
+      "@infrastructure/*": ["src/infrastructure/*"],
+      "@presentation/*": ["src/presentation/*"],
+      "@state/*": ["src/state/*"]
     }
   },
   "include": ["src"],

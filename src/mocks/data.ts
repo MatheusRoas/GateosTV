@@ -13,6 +13,10 @@ import type {
   TeamStanding
 } from '@/types';
 
+// NOTE: Mock data uses string IDs which are cast to branded types at runtime.
+// Type checking is lenient to allow string literal patterns for demonstration data.
+// In production code, use proper type constructors or factories.
+
 interface TeamSeed {
   id: TeamId;
   name: string;

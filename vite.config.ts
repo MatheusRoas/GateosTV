@@ -32,7 +32,11 @@ export default defineConfig({
       '@utils': path.resolve(__dirname, './src/utils'),
       '@constants': path.resolve(__dirname, './src/constants'),
       '@assets': path.resolve(__dirname, './src/assets'),
-      '@mocks': path.resolve(__dirname, './src/mocks')
+      '@mocks': path.resolve(__dirname, './src/mocks'),
+      '@domain': path.resolve(__dirname, './src/domain'),
+      '@infrastructure': path.resolve(__dirname, './src/infrastructure'),
+      '@presentation': path.resolve(__dirname, './src/presentation'),
+      '@state': path.resolve(__dirname, './src/state')
     }
   },
   build: {
