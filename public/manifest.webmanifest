@@ -3,8 +3,8 @@
   "short_name": "Mundial 2026",
   "description": "Aplicacion progresiva del Mundial 2026 con calendario, grupos, favoritos y uso sin conexion",
   "lang": "es-ES",
-  "start_url": "/",
-  "scope": "/",
+  "start_url": "./",
+  "scope": "./",
   "display": "standalone",
   "orientation": "portrait-primary",
   "background_color": "#030612",
@@ -12,13 +12,13 @@
   "categories": ["sports", "news", "entertainment"],
   "icons": [
     {
-      "src": "/icons/icon.svg",
+      "src": "./icons/icon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any"
     },
     {
-      "src": "/icons/icon-maskable.svg",
+      "src": "./icons/icon-maskable.svg",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "maskable"
@@ -26,7 +26,7 @@
   ],
   "screenshots": [
     {
-      "src": "/icons/promo-wide.svg",
+      "src": "./icons/promo-wide.svg",
       "sizes": "1280x720",
       "type": "image/svg+xml",
       "form_factor": "wide"
@@ -37,19 +37,19 @@
       "name": "Calendario",
       "short_name": "Partidos",
       "description": "Acceso rapido al calendario completo",
-      "url": "/#calendario"
+      "url": "./#calendario"
     },
     {
       "name": "Grupos",
       "short_name": "Grupos",
       "description": "Consulta las clasificaciones de cada grupo",
-      "url": "/#grupos"
+      "url": "./#grupos"
     },
     {
       "name": "Favoritos",
       "short_name": "Favoritos",
       "description": "Revisa tus selecciones marcadas",
-      "url": "/#favoritos"
+      "url": "./#favoritos"
     }
   ]
 }

@@ -9,7 +9,13 @@ declare const self: ServiceWorkerGlobalScope & {
 const VERSION = 'fifa2026-v1';
 const APP_CACHE = `${VERSION}:app`;
 const DATA_CACHE = `${VERSION}:data`;
-const APP_SHELL = ['/', '/manifest.webmanifest', '/icons/icon.svg', '/icons/icon-maskable.svg'];
+const APP_BASE = self.location.pathname.replace(/[^/]+$/, '');
+const APP_SHELL = [
+  APP_BASE,
+  `${APP_BASE}manifest.webmanifest`,
+  `${APP_BASE}icons/icon.svg`,
+  `${APP_BASE}icons/icon-maskable.svg`
+];
 const manifestEntries = (self.__WB_MANIFEST ?? []).map((entry) => (typeof entry === 'string' ? entry : entry.url));
 const PRECACHE_ASSETS = [...new Set([...APP_SHELL, ...manifestEntries])];
 
@@ -58,7 +64,7 @@ self.addEventListener('fetch', (event) => {
         })
         .catch(async () => {
           const cachedResponse = await caches.match(event.request);
-          const appShellResponse = await caches.match('/');
+          const appShellResponse = await caches.match(APP_BASE);
           return cachedResponse ?? appShellResponse ?? Response.error();
         })
     );
