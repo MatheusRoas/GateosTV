@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 import { BottomNav } from '@components/common/BottomNav';
 import { ConnectionStatus } from '@components/common/ConnectionStatus';
 import { ErrorState } from '@components/common/Error';
@@ -499,6 +500,7 @@ function App() {
       </section>
 
       <BottomNav currentSection={selectedSection} onChange={setSelectedSection} />
+      <SpeedInsights />
     </main>
   );
 }
