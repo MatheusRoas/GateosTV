@@ -112,42 +112,150 @@ const STADIUM_SEEDS: readonly StadiumSeed[] = [
 
 const POSITION_PATTERN = ['GK', 'DEF', 'DEF', 'DEF', 'MID', 'MID', 'FWD', 'FWD'] as const;
 const SHIRT_NUMBERS = [1, 2, 4, 5, 6, 8, 10, 9] as const;
-const PLAYER_FIRST_NAMES = [
-  'Adrian',
-  'Mateo',
-  'Lucas',
-  'Daniel',
-  'Samuel',
-  'Hugo',
-  'Nicolas',
-  'Julian',
-  'Leo',
-  'Bruno',
-  'Thiago',
-  'Martin',
-  'Ruben',
-  'Marco',
-  'Ilias',
-  'Noah'
-] as const;
-const PLAYER_LAST_NAMES = [
-  'Silva',
-  'Mendez',
-  'Costa',
-  'Pereira',
-  'Torres',
-  'Navarro',
-  'Khan',
-  'Santos',
-  'Diaz',
-  'Romero',
-  'Vega',
-  'Campos',
-  'Bennani',
-  'Arias',
-  'Lopez',
-  'Serrano'
-] as const;
+
+// Nomes de jogadores reais e plausíveis por time
+const PLAYER_NAMES_BY_TEAM: Record<string, Array<{name: string, position: typeof POSITION_PATTERN[number], number: number}>> = {
+  'brazil': [
+    {name: 'Alisson', position: 'GK', number: 1},
+    {name: 'Danilo', position: 'DEF', number: 2},
+    {name: 'Marquinhos', position: 'DEF', number: 4},
+    {name: 'Militao', position: 'DEF', number: 5},
+    {name: 'Fred', position: 'MID', number: 6},
+    {name: 'Lucas Paqueta', position: 'MID', number: 8},
+    {name: 'Neymar', position: 'FWD', number: 10},
+    {name: 'Rodrygo', position: 'FWD', number: 9},
+  ],
+  'argentina': [
+    {name: 'Martinez', position: 'GK', number: 1},
+    {name: 'Tagliafico', position: 'DEF', number: 3},
+    {name: 'Romero', position: 'DEF', number: 6},
+    {name: 'Otamendi', position: 'DEF', number: 19},
+    {name: 'De Paul', position: 'MID', number: 5},
+    {name: 'Fernandez', position: 'MID', number: 7},
+    {name: 'Messi', position: 'FWD', number: 10},
+    {name: 'Alvarez', position: 'FWD', number: 9},
+  ],
+  'france': [
+    {name: 'Lloris', position: 'GK', number: 1},
+    {name: 'Hernandez', position: 'DEF', number: 21},
+    {name: 'Saliba', position: 'DEF', number: 17},
+    {name: 'Pavard', position: 'DEF', number: 2},
+    {name: 'Tchouameni', position: 'MID', number: 18},
+    {name: 'Griezmann', position: 'MID', number: 7},
+    {name: 'Mbappe', position: 'FWD', number: 10},
+    {name: 'Benzema', position: 'FWD', number: 19},
+  ],
+  'spain': [
+    {name: 'Unai Simon', position: 'GK', number: 1},
+    {name: 'Alba', position: 'DEF', number: 18},
+    {name: 'Laporte', position: 'DEF', number: 15},
+    {name: 'Carvajal', position: 'DEF', number: 2},
+    {name: 'Busquets', position: 'MID', number: 5},
+    {name: 'Pedri', position: 'MID', number: 26},
+    {name: 'Gavi', position: 'FWD', number: 21},
+    {name: 'Ferran Torres', position: 'FWD', number: 17},
+  ],
+  'england': [
+    {name: 'Pickford', position: 'GK', number: 1},
+    {name: 'Shaw', position: 'DEF', number: 3},
+    {name: 'Maguire', position: 'DEF', number: 6},
+    {name: 'James', position: 'DEF', number: 2},
+    {name: 'Rice', position: 'MID', number: 4},
+    {name: 'Mount', position: 'MID', number: 19},
+    {name: 'Kane', position: 'FWD', number: 10},
+    {name: 'Saka', position: 'FWD', number: 7},
+  ],
+  'germany': [
+    {name: 'Neuer', position: 'GK', number: 1},
+    {name: 'Raum', position: 'DEF', number: 3},
+    {name: 'Rudiger', position: 'DEF', number: 2},
+    {name: 'Ginter', position: 'DEF', number: 5},
+    {name: 'Kroos', position: 'MID', number: 8},
+    {name: 'Goretzka', position: 'MID', number: 18},
+    {name: 'Werner', position: 'FWD', number: 11},
+    {name: 'Muller', position: 'FWD', number: 13},
+  ],
+  'netherlands': [
+    {name: 'Noppert', position: 'GK', number: 1},
+    {name: 'Ake', position: 'DEF', number: 3},
+    {name: 'De Vrij', position: 'DEF', number: 6},
+    {name: 'Dumfries', position: 'DEF', number: 2},
+    {name: 'De Jong', position: 'MID', number: 21},
+    {name: 'Gravenberch', position: 'MID', number: 5},
+    {name: 'Gakpo', position: 'FWD', number: 19},
+    {name: 'Depay', position: 'FWD', number: 10},
+  ],
+  'portugal': [
+    {name: 'Costa', position: 'GK', number: 1},
+    {name: 'Guerreiro', position: 'DEF', number: 13},
+    {name: 'Dias', position: 'DEF', number: 4},
+    {name: 'Semedo', position: 'DEF', number: 22},
+    {name: 'Nunes', position: 'MID', number: 18},
+    {name: 'Fernandes', position: 'MID', number: 8},
+    {name: 'Ronaldo', position: 'FWD', number: 7},
+    {name: 'Leao', position: 'FWD', number: 10},
+  ],
+  'canada': [
+    {name: 'Diop', position: 'GK', number: 1},
+    {name: 'Adekugbe', position: 'DEF', number: 2},
+    {name: 'Vitoria', position: 'DEF', number: 5},
+    {name: 'Miller', position: 'DEF', number: 4},
+    {name: 'Buchanan', position: 'MID', number: 7},
+    {name: 'Osorio', position: 'MID', number: 14},
+    {name: 'Laryea', position: 'FWD', number: 11},
+    {name: 'David', position: 'FWD', number: 17},
+  ],
+  'usa': [
+    {name: 'Steffen', position: 'GK', number: 1},
+    {name: 'Robinson', position: 'DEF', number: 5},
+    {name: 'McKenzie', position: 'DEF', number: 4},
+    {name: 'Scally', position: 'DEF', number: 2},
+    {name: 'Adams', position: 'MID', number: 6},
+    {name: 'Musah', position: 'MID', number: 8},
+    {name: 'Pulisic', position: 'FWD', number: 10},
+    {name: 'Sargent', position: 'FWD', number: 9},
+  ],
+  'mexico': [
+    {name: 'Gonzalez', position: 'GK', number: 1},
+    {name: 'Gallardo', position: 'DEF', number: 3},
+    {name: 'Moreno', position: 'DEF', number: 6},
+    {name: 'Vasquez', position: 'DEF', number: 2},
+    {name: 'Gutierrez', position: 'MID', number: 5},
+    {name: 'Chavez', position: 'MID', number: 18},
+    {name: 'Vela', position: 'FWD', number: 11},
+    {name: 'Lozano', position: 'FWD', number: 22},
+  ],
+  'colombia': [
+    {name: 'Ospina', position: 'GK', number: 1},
+    {name: 'Mojica', position: 'DEF', number: 3},
+    {name: 'Sanchez', position: 'DEF', number: 6},
+    {name: 'Mina', position: 'DEF', number: 5},
+    {name: 'Arias', position: 'MID', number: 4},
+    {name: 'Lerma', position: 'MID', number: 8},
+    {name: 'Diaz', position: 'FWD', number: 19},
+    {name: 'Muriel', position: 'FWD', number: 9},
+  ],
+  'uruguay': [
+    {name: 'Rochet', position: 'GK', number: 1},
+    {name: 'Olivera', position: 'DEF', number: 3},
+    {name: 'Gimenez', position: 'DEF', number: 2},
+    {name: 'Caceres', position: 'DEF', number: 6},
+    {name: 'Nandez', position: 'MID', number: 5},
+    {name: 'Valverde', position: 'MID', number: 15},
+    {name: 'Cavani', position: 'FWD', number: 21},
+    {name: 'Suarez', position: 'FWD', number: 9},
+  ],
+  'ecuador': [
+    {name: 'Dominguez', position: 'GK', number: 1},
+    {name: 'Porozo', position: 'DEF', number: 2},
+    {name: 'Hincapie', position: 'DEF', number: 3},
+    {name: 'Torres', position: 'DEF', number: 4},
+    {name: 'Sarmiento', position: 'MID', number: 5},
+    {name: 'Rodriguez', position: 'MID', number: 8},
+    {name: 'Valencia', position: 'FWD', number: 11},
+    {name: 'Ibarra', position: 'FWD', number: 9},
+  ],
+};
 const CLUBS = [
   'Real Madrid',
   'Manchester City',
@@ -256,36 +364,39 @@ const buildTeams = (): Team[] =>
   }));
 
 const buildPlayers = (teams: Team[]): Player[] =>
-  teams.flatMap((team, teamIndex) =>
-    POSITION_PATTERN.map((position, playerIndex) => {
-      const nameSeed = teamIndex * POSITION_PATTERN.length + playerIndex;
-      const firstName = PLAYER_FIRST_NAMES[nameSeed % PLAYER_FIRST_NAMES.length];
-      const lastName = PLAYER_LAST_NAMES[(nameSeed + team.name.length) % PLAYER_LAST_NAMES.length];
-      const appearances = 3 + (nameSeed % 4);
+  teams.flatMap((team) => {
+    const teamPlayers = PLAYER_NAMES_BY_TEAM[team.id] || POSITION_PATTERN.map((_, i) => ({
+      name: `Player ${i + 1}`,
+      position: POSITION_PATTERN[i],
+      number: SHIRT_NUMBERS[i]
+    }));
+    
+    return teamPlayers.map((player, playerIndex) => {
+      const appearances = 3 + (playerIndex % 4);
       const goals =
-        position === 'FWD'
-          ? 2 + (nameSeed % 5)
-          : position === 'MID'
-            ? nameSeed % 3
-            : position === 'DEF'
-              ? nameSeed % 2
+        player.position === 'FWD'
+          ? 2 + (playerIndex % 5)
+          : player.position === 'MID'
+            ? playerIndex % 3
+            : player.position === 'DEF'
+              ? playerIndex % 2
               : 0;
-      const assists = position === 'GK' ? 0 : (nameSeed + 1) % 4;
+      const assists = player.position === 'GK' ? 0 : (playerIndex + 1) % 4;
 
       return {
         id: `${team.id}-${playerIndex + 1}`,
-        name: `${firstName} ${lastName}`,
+        name: player.name,
         teamId: team.id,
-        position,
-        number: SHIRT_NUMBERS[playerIndex],
-        age: 21 + ((nameSeed + team.fifaRanking) % 12),
+        position: player.position,
+        number: player.number,
+        age: 21 + ((playerIndex + team.fifaRanking) % 12),
         goals,
         assists,
         appearances,
-        club: CLUBS[(nameSeed + teamIndex) % CLUBS.length]
+        club: CLUBS[(playerIndex + team.fifaRanking) % CLUBS.length]
       } satisfies Player;
-    })
-  );
+    });
+  });
 
 const createEmptyStadiums = (): Stadium[] =>
   STADIUM_SEEDS.map((stadium) => ({
