@@ -5,6 +5,7 @@
  */
 
 import { API_CONFIG, API_ENDPOINTS, shouldUseNetworkFirst } from '@infrastructure/config/ApiConfiguration';
+import { ApiFootballClient } from '@infrastructure/adapters/ApiFootballClient';
 import { mockTournamentDataProvider } from '@infrastructure/mocks/MockTournamentDataProvider';
 import { useTournamentState } from '@state/application/TournamentApplicationState';
 import { useConnectivityState } from '@state/connectivity/ConnectivityManager';
@@ -71,6 +72,14 @@ const assembleApiUrl = (endpoint: string, queryParams?: QueryStringParameters): 
  * Adaptador central para todos os dados do torneio
  */
 class TournamentDataAdapter {
+  private apiFootballClient: ApiFootballClient | null;
+
+  constructor() {
+    // Tenta inicializar cliente de API-Football se a key está configurada
+    const apiFootballKey = (import.meta as any).env?.VITE_API_FOOTBALL_KEY;
+    this.apiFootballClient = apiFootballKey ? new ApiFootballClient(apiFootballKey, API_CONFIG.timeoutMs) : null;
+  }
+
   private async executeApiRequest<T>(endpoint: string, queryParams?: QueryStringParameters): Promise<T> {
     const connectivityState = useConnectivityState.getState();
     const appState = useTournamentState.getState();
@@ -148,6 +157,13 @@ class TournamentDataAdapter {
    * Busca todos os competidores
    */
   async fetchCompetitorTeams(): Promise<CompetitorTeam[]> {
+    if (this.apiFootballClient) {
+      return this.executeWithMockFallback(
+        () => this.apiFootballClient!.fetchTeams(),
+        () => mockTournamentDataProvider.fetchCompetitorTeams()
+      );
+    }
+
     return this.executeWithMockFallback(
       () => this.executeApiRequest<CompetitorTeam[]>(API_ENDPOINTS.teams),
       () => mockTournamentDataProvider.fetchCompetitorTeams()
@@ -168,6 +184,13 @@ class TournamentDataAdapter {
    * Busca partidas com filtros opcionais
    */
   async fetchScheduledMatches(filters: MatchQueryFilters = {}): Promise<CompetitionMatch[]> {
+    if (this.apiFootballClient) {
+      return this.executeWithMockFallback(
+        () => this.apiFootballClient!.fetchMatches(),
+        () => mockTournamentDataProvider.fetchScheduledMatches(filters)
+      );
+    }
+
     return this.executeWithMockFallback(
       () => this.executeApiRequest<CompetitionMatch[]>(API_ENDPOINTS.matches, filters as QueryStringParameters),
       () => mockTournamentDataProvider.fetchScheduledMatches(filters)
@@ -178,6 +201,13 @@ class TournamentDataAdapter {
    * Busca atletas de um time ou todos
    */
   async fetchAthletes(teamId?: CompetitorTeamId): Promise<AthleteProfile[]> {
+    if (this.apiFootballClient && teamId) {
+      return this.executeWithMockFallback(
+        () => this.apiFootballClient!.fetchPlayers(Number(teamId) as any),
+        () => mockTournamentDataProvider.fetchAthletes(teamId)
+      );
+    }
+
     return this.executeWithMockFallback(
       () => this.executeApiRequest<AthleteProfile[]>(API_ENDPOINTS.players, teamId ? { teamId } : undefined),
       () => mockTournamentDataProvider.fetchAthletes(teamId)
@@ -187,7 +217,12 @@ class TournamentDataAdapter {
   /**
    * Busca detalhes de todos os estádios
    */
-  async fetchVenueDetails(): Promise<VenueInformation[]> {
+  async fetchVenueDetails(): Promise<VenueInformation[]> {    if (this.apiFootballClient) {
+      return this.executeWithMockFallback(
+        () => this.apiFootballClient!.fetchStadiums(),
+        () => mockTournamentDataProvider.fetchVenueDetails()
+      );
+    }
     return this.executeWithMockFallback(
       () => this.executeApiRequest<VenueInformation[]>(API_ENDPOINTS.stadiums),
       () => mockTournamentDataProvider.fetchVenueDetails()
@@ -197,7 +232,15 @@ class TournamentDataAdapter {
   /**
    * Busca classificações dos grupos
    */
-  async fetchGroupStandings(): Promise<GroupStandingsRecord[]> {
+  async fetchGroupStandings(): Promise<GroupStandingsRecord[]> {    if (this.apiFootballClient) {
+      return this.executeWithMockFallback(
+        () => this.apiFootballClient!.fetchStandings().then((standings) => {
+          // Converte resposta de standings do API-Football para formato esperado
+          return standings as any as GroupStandingsRecord[];
+        }),
+        () => mockTournamentDataProvider.fetchGroupStandings()
+      );
+    }
     return this.executeWithMockFallback(
       () => this.executeApiRequest<GroupStandingsRecord[]>(API_ENDPOINTS.standings),
       () => mockTournamentDataProvider.fetchGroupStandings()
@@ -208,6 +251,13 @@ class TournamentDataAdapter {
    * Busca estatísticas globais do torneio
    */
   async fetchTournamentMetrics(): Promise<TournamentStatistics> {
+    if (this.apiFootballClient) {
+      return this.executeWithMockFallback(
+        () => this.apiFootballClient!.fetchTournamentStats(),
+        () => mockTournamentDataProvider.fetchTournamentMetrics()
+      );
+    }
+
     return this.executeWithMockFallback(
       () => this.executeApiRequest<TournamentStatistics>(API_ENDPOINTS.stats),
       () => mockTournamentDataProvider.fetchTournamentMetrics()

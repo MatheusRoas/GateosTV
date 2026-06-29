@@ -97,3 +97,9 @@ export const API_ENDPOINTS = API_CONFIG.endpoints;
  */
 export const shouldUseNetworkFirst = (): boolean =>
   Boolean(API_CONFIG.baseUrl) && !API_CONFIG.useMockData;
+
+/**
+ * API Key para API-Football (RapidAPI)
+ * Lida do ambiente VITE_API_FOOTBALL_KEY
+ */
+export const API_FOOTBALL_KEY = environmentVariables.VITE_API_FOOTBALL_KEY?.trim() ?? '';
