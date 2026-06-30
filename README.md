@@ -71,9 +71,9 @@ npm run preview
 
 ## Despliegue en GitHub Pages
 
-1. Actualiza `vite.config.ts` con tu nombre de repositorio:
+1. La aplicacion ya esta configurada para este repositorio:
 ```typescript
-base: '/nombre-del-repo/'
+base: '/GateosTV/'
 ```
 
 2. Habilita GitHub Pages en los ajustes del repositorio (Source: GitHub Actions)
@@ -84,6 +84,7 @@ git push origin main
 ```
 
 El despliegue se realiza automaticamente mediante GitHub Actions.
+URL publica: `https://matheusroas.github.io/GateosTV/`
 
 ## Estructura del Proyecto
 
